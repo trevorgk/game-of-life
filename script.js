@@ -2,7 +2,7 @@
 
 var game = (function(){
 
-	var width = 5, height = 5, tbl;
+	var width = 20, height = 15, tbl, loop;
 	
 	var seed = function() {	
 		var grid = new Array(height), tr, td;
@@ -20,7 +20,7 @@ var game = (function(){
 			}
 		}
 		
-		var loop = setInterval(function() {		
+		loop = setInterval(function() {		
 			console.log('iterating...');
 			var liveNeighbourCount;
 /*
@@ -29,11 +29,11 @@ var game = (function(){
  * Any live cell with more than three live neighbours dies, as if by overcrowding.
  * Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
  */
-			var previousState = grid;
+			var previousState = clone(grid);
 			
 			for (var i = 0; i < height; i++) {
 				for (var j = 0; j < width; j++) {
-					liveNeighbourCount = countLiveNeighbours(grid, i, j);
+					liveNeighbourCount = countLiveNeighbours(previousState, i, j);
 					
 					if (previousState[i][j]) {					
 						grid[i][j] = liveNeighbourCount >= 2 && liveNeighbourCount < 4;
@@ -45,10 +45,20 @@ var game = (function(){
 				}
 			}
 			
-		}, 1000);
-		//console.log(grid);
+		}, 1000);	
+	}
+
+	var pause = function() {
+		clearInterval(loop);
+	}
 	
-	};
+	var clone = function(grid) {
+		var clone = new Array(height);
+		for (var i = 0; i < height; i++) {
+			clone[i] = grid[i].slice();
+		}
+		return clone;
+	}
 	
 	var countLiveNeighbours = function(grid, x, y) {
 		var count = 0;
@@ -62,7 +72,7 @@ var game = (function(){
 			}
 		}
 		return count;
-	};
+	}
 	
 	var setCheckboxAt = function(x, y, value) {
 		var row = tbl.rows[x];
@@ -75,7 +85,7 @@ var game = (function(){
 		init: function() {
 			console.log('init');
 			var container = document.getElementById('container'), 
-				submitBtn = document.createElement('input'),
+				submitBtn = document.createElement('input'), stopBtn = document.createElement('button'),
 				tr, td, checkbox;
 			
 			tbl = document.createElement('table');
@@ -100,6 +110,11 @@ var game = (function(){
 			submitBtn.setAttribute('value', 'Mindfuck!');
 			submitBtn.onclick = seed;
 			container.appendChild(submitBtn);
+				
+			stopBtn.innerText = 'Halt';
+			stopBtn.onclick = pause;
+			container.appendChild(stopBtn);
+			
 			
 		}
 	}
