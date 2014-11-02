@@ -2,7 +2,7 @@
 
 var game = (function(){
 
-	var width = 20, height = 20, tbl;
+	var width = 5, height = 5, tbl;
 	
 	var seed = function() {	
 		var grid = new Array(height), tr, td;
@@ -20,8 +20,9 @@ var game = (function(){
 			}
 		}
 		
-		var loop = setTimeout(function() {		
-			console.log('test');
+		var loop = setInterval(function() {		
+			console.log('iterating...');
+			var liveNeighbourCount;
 /*
  * Any live cell with fewer than two live neighbours dies, as if caused by under-population.
  * Any live cell with two or three live neighbours lives on to the next generation.
@@ -32,13 +33,20 @@ var game = (function(){
 			
 			for (var i = 0; i < height; i++) {
 				for (var j = 0; j < width; j++) {
-					var liveNeighbourCount = countLiveNeighbours(grid, i, j);
-					console.log(i, j, liveNeighbourCount);
+					liveNeighbourCount = countLiveNeighbours(grid, i, j);
+					
+					if (previousState[i][j]) {					
+						grid[i][j] = liveNeighbourCount >= 2 && liveNeighbourCount < 4;
+					}
+					else {
+						grid[i][j] = liveNeighbourCount == 3;
+					}					
+					setCheckboxAt(i, j, grid[i][j]);
 				}
 			}
 			
 		}, 1000);
-		console.log(grid);
+		//console.log(grid);
 	
 	};
 	
@@ -50,14 +58,17 @@ var game = (function(){
 				if (j < 0 || j >= width) continue;
 				if (i == x && j == y) continue;
 				
-				count += grid[i][j] ? 1 : 0;
-				
+				count += grid[i][j] ? 1 : 0;				
 			}
 		}
 		return count;
 	};
 	
-	var setCheckboxAt = function(x, y) {
+	var setCheckboxAt = function(x, y, value) {
+		var row = tbl.rows[x];
+		var cell = row.cells[y];
+		var checkbox = cell.firstChild;
+		checkbox.checked = value;
 	}
 	
 	return {
