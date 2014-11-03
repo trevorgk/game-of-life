@@ -2,7 +2,7 @@
 
 var game = (function(){
 
-	var width = 20, height = 15, tbl, loop;
+	var width = 25, height = 25, tbl, loop;
 	
 	var seed = function() {	
 		var grid = new Array(height), tr, td;
@@ -13,7 +13,7 @@ var game = (function(){
 			
 			for (var j = 0; j < width; j++) {
 				td = tr.cells[j];
-				var checkbox = td.firstChild;
+				var checkbox = td.firstChild.firstChild;
 				
 				grid[i][j] = checkbox.checked;
 				
@@ -77,7 +77,7 @@ var game = (function(){
 	var setCheckboxAt = function(x, y, value) {
 		var row = tbl.rows[x];
 		var cell = row.cells[y];
-		var checkbox = cell.firstChild;
+		var checkbox = cell.firstChild.firstChild;
 		checkbox.checked = value;
 	}
 	
@@ -86,7 +86,7 @@ var game = (function(){
 			console.log('init');
 			var container = document.getElementById('container'), 
 				submitBtn = document.createElement('input'), stopBtn = document.createElement('button'),
-				tr, td, checkbox;
+				tr, td, checkbox, label, checkboxId, span;
 			
 			tbl = document.createElement('table');
 			
@@ -95,10 +95,23 @@ var game = (function(){
 				
 				for (var j = 0; j < width; j++) {
 					td = document.createElement('td');
+					
+					checkboxId = "checkbox_" + i + "_" + j;
+					
 					checkbox = document.createElement('input');
-						
+					checkbox.id = checkboxId;
 					checkbox.setAttribute('type', 'checkbox');
-					td.appendChild(checkbox);
+					
+					label = document.createElement('label');
+					label.setAttribute('for', checkboxId);					
+					
+					span = document.createElement('span');
+					span.setAttribute('class', 'box');
+					
+					label.appendChild(checkbox);
+					label.appendChild(span);					
+					
+					td.appendChild(label);
 					tr.appendChild(td);
 				}
 				
